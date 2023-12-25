@@ -16,7 +16,7 @@ df_partitions = df_partitions.loc[df_partitions["AvailableGPUs"] != "(null)"]
 # We got this information from the official
 # Simlab github documentation repository
 max_allocation_details = {
-    'defq': {'MaxCpuTime': '1 hour', 'NodesAvailable': '7 (node[01-05], node14, node15)', 'MaxNodesPerJob': 1, 'MinMaxCoresPerJob': '1-44'},
+    'defq*': {'MaxCpuTime': '1 hour', 'NodesAvailable': '7 (node[01-05], node14, node15)', 'MaxNodesPerJob': 1, 'MinMaxCoresPerJob': '1-44'},
     'shortq': {'MaxCpuTime': '4 hours', 'NodesAvailable': '7 (node[01-05], node14, node15)', 'MaxNodesPerJob': 2, 'MinMaxCoresPerJob': '1-88'},
     'longq': {'MaxCpuTime': '30 days', 'NodesAvailable': '7 (node[01-05], node14, node15)', 'MaxNodesPerJob': 1, 'MinMaxCoresPerJob': '1-44'},
     'special': {'MaxCpuTime': '30 minutes', 'NodesAvailable': '17 (all nodes)', 'MaxNodesPerJob': 17, 'MinMaxCoresPerJob': '1-740'},
@@ -174,7 +174,7 @@ app.layout = html.Div([
             id='max-allocation-info1',
             style={'margin-top': '20px', 'font-size': '24px', 'font-family': 'Trebuchet MS'}
         ),
-        
+
         # Display maximum allocation details
         html.Div(
             id='max-allocation-info2',
@@ -201,6 +201,10 @@ def update_display(selected_partition):
     # Update DataTable for resource information
     selected_partition_info = df_partitions[df_partitions['Partition'] == selected_partition]
 
+    # Get the list of nodes with available GPUs
+    gpu_nodes = gpu_information_df2[gpu_information_df2['Partition'] == selected_partition]['Nodes'].values
+    gpu_nodes_str = ', '.join(set(map(str, gpu_nodes[0]))) if gpu_nodes and gpu_nodes[0] else 'N/A'
+
     if not selected_partition_info.empty:
         # Check if the columns exist and remove leading/trailing whitespaces
         selected_partition_info.columns = selected_partition_info.columns.str.strip()
@@ -218,7 +222,7 @@ def update_display(selected_partition):
             gpu_info_row = gpu_information_df[gpu_information_df['Partition'] == selected_partition]
             if not gpu_info_row.empty:
                 gpu_info_value = gpu_info_row['GPU_Available'].values[0]
-                resource_data.append({"Metric": "Available GPUs", "Value": gpu_info_value})
+                resource_data.append({"Metric": "Available GPUs", "Value": (len(gpu_nodes_str)+2)//8})
         else:
             resource_data = []
 
@@ -231,10 +235,6 @@ def update_display(selected_partition):
             la_variable4 = min(la_variable3, int(available_cpus_values[1]))
         else:
             la_variable4 = "N/A"
-        
-        # Get the list of nodes with available GPUs
-        gpu_nodes = gpu_information_df2[gpu_information_df2['Partition'] == selected_partition]['Nodes'].values
-        gpu_nodes_str = ', '.join(map(str, gpu_nodes[0])) if gpu_nodes and gpu_nodes[0] else 'N/A'
         
         max_allocation_info1 = [
             f"The number of CPUs You Can Allocate: {la_variable4}",
