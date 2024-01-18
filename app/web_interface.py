@@ -56,7 +56,6 @@ app.layout = html.Div([
                     'Information about this partition\'s CPUS',
                     style={'font-family': 'Trebuchet MS'}
                 ),
-
                 html.Div([
                     # Display the resource information in a table
                     dash_table.DataTable(
@@ -65,7 +64,7 @@ app.layout = html.Div([
                             {"name": "Metric", "id": "Metric"},
                             {"name": "Value", "id": "Value"},
                         ],
-                        style_table={'overflowX': 'auto', 'font-size': '20px', 'font-family': 'Trebuchet MS', 'margin-bottom': '20px', 'width': '400px'},
+                        style_table={'overflowX': 'auto', 'font-size': '21px', 'font-family': 'Trebuchet MS', 'margin-bottom': '20px', 'width': '400px'},
                         style_header={'font-size': '22px', 'fontWeight': 'bold', 'padding': '10px', 'width': '200px', 'font-family': 'Trebuchet MS', 'text-align': 'center'},
                         style_cell={'padding': '10px', 'width': '200px', 'font-family': 'Trebuchet MS', 'text-align': 'center'}
                     ),
